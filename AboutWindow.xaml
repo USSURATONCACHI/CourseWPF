@@ -1,0 +1,29 @@
+﻿<Window x:Class="CourseWPF.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CourseWPF"
+        mc:Ignorable="d"
+        Title="Анализ движения - О программе" Height="300" Width="500">
+    <Grid>
+        <ScrollViewer Padding="30">
+            <StackPanel MaxWidth="1000" HorizontalAlignment="Stretch">
+                <TextBlock Text="О программе" FontSize="24" Margin="15"/>
+                <RichTextBox IsDocumentEnabled="True" IsReadOnly="True">
+                    <FlowDocument>
+                        <Paragraph>
+                            <TextBlock>Автор: Даниил Р.</TextBlock>
+                            <Hyperlink NavigateUri="https://github.com/USSURATONCACHI">GitHub</Hyperlink>
+                            <Hyperlink NavigateUri="https://vk.com/d.redchin">VK</Hyperlink>
+                        </Paragraph>
+
+                        <Paragraph>Программа: Анализ движения, курсовая, 2 курс</Paragraph>
+                        <Paragraph>Программа предназначена для разноуровневого анализа движения технологического объекта. Анализ производится по данным "датчиков высот".</Paragraph>
+                        <Paragraph>Использованные библиотеки: OxyPlot, SQLite, MdXaml.</Paragraph>
+                    </FlowDocument>
+                </RichTextBox>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

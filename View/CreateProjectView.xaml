@@ -1,0 +1,153 @@
+﻿<UserControl x:Class="CourseWPF.View.CreateProjectView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CourseWPF.View"
+             xmlns:ctrls="clr-namespace:CourseWPF.View.Controls"
+             mc:Ignorable="d" 
+             d:DesignWidth="800" Background="White">
+    <Grid>
+        <ScrollViewer MaxWidth="1000" HorizontalAlignment="Stretch">
+            <Grid Grid.IsSharedSizeScope="True" Margin="50, 30">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Создание проекта" FontSize="24" Padding="15"/>
+                    <TextBox Grid.Column="1" Text="{Binding ProjectName}" VerticalAlignment="Stretch" FontSize="18"
+                             VerticalContentAlignment="Center" Margin="15,5" Padding="10,0"/>
+                    <Button Grid.Column="2" Content="К списку проектов >" Command="{Binding Return}" 
+                            HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Padding="15,5" FontSize="14"/>
+                </Grid>
+                
+                <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="Список высот" FontSize="20" Padding="30,5,5,5"/>
+                <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Vertical" Margin="40,0,15,0">
+                    <Button Content="Открыть БД" Padding="15,5" Margin="0,0,0,0" Command="{Binding OpenHeightsDb}"/>
+                    <TextBlock Text="Выбранная таблица:" Padding="15,5" Margin="0,0,0,0"/>
+                    <ComboBox Padding="15,5" Margin="0,0,0,10" ItemsSource="{Binding AvailableDbTables}" SelectedIndex="{Binding SelectedTableIndex}"/>
+                    <Button Content="Загрузить" Padding="15,5" Margin="0,0,0,10" Command="{Binding LoadDbTable}"/>
+                    <Button Content="Запустить исправление данных" Padding="15,5" Margin="0,0,0,10" Command="{Binding RunDbFix}"/>
+                </StackPanel>
+                <DataGrid Grid.Row="3" Grid.Column="1" Margin="0,0,0,10"
+                          DataContext="{Binding HeightsTable}" ItemsSource="{Binding DefaultView}" 
+                          CanUserSortColumns="False" CanUserReorderColumns="False" CanUserAddRows="False" IsReadOnly="True"
+                          CanUserDeleteRows="False" MaxHeight="600"/>
+
+                <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Text="Данные точек" FontSize="20" Padding="30,30,5,5"/>
+                <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Vertical" Margin="40,0,15,0">
+                    <TextBlock Text="Название таблицы:" Padding="15,5" Margin="0,0,0,10"/>
+                    <TextBox Text="{Binding PointsTableName}" Padding="15,5" Margin="0,0,0,10"/>
+                    <Button Content="Загрузить из БД" Padding="15,5" Margin="0,0,0,10" Command="{Binding OpenPointsDb}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Количество блоков:"/>
+                        <TextBlock Grid.Column="1" Text="{Binding BlocksCount}"/>
+                        <Button Grid.Column="2" Content="+" Width="20" Margin="5,0" Command="{Binding AddBlock}"/>
+                        <Button Grid.Column="3" Content="-" Width="20" Margin="5,0" Command="{Binding RemoveBlock}"/>
+                    </Grid>
+                </StackPanel>
+                
+                <ListView Grid.Row="5" Grid.Column="1" ItemsSource="{Binding AvailablePoints}" MinHeight="200" MaxHeight="400">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                        <Border BorderBrush="Transparent" BorderThickness="0" Background="{TemplateBinding Background}">
+                                            <GridViewRowPresenter HorizontalAlignment="Stretch" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Width="Auto" Margin="0" Content="{TemplateBinding Content}"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+
+                    <ListView.View>
+                        <GridView>
+                            <GridView.ColumnHeaderContainerStyle>
+                                <Style TargetType="{x:Type GridViewColumnHeader}">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                            </GridView.ColumnHeaderContainerStyle>
+
+                            <GridView.Columns>
+                                <GridViewColumn Header="Точка">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding PointId}" Padding="0,3" Margin="15,5" HorizontalAlignment="Stretch" MinWidth="60"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                
+                                <GridViewColumn Header="X">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <ctrls:DoubleTextBox DoubleValue="{Binding X}" Padding="0,3" Margin="15,5" HorizontalAlignment="Stretch" MinWidth="60"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="Y">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <ctrls:DoubleTextBox DoubleValue="{Binding Y}" Padding="0,3" Margin="15,5" HorizontalAlignment="Stretch" MinWidth="60"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="Block">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <ComboBox SelectedIndex="{Binding BlockId}" Padding="0,3" Margin="15,5" HorizontalAlignment="Stretch" MinWidth="60"
+                                                          ItemsSource="{Binding Path=DataContext.AvailableBlocks, RelativeSource={RelativeSource AncestorType=ListView}}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView.Columns>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                <TextBlock Grid.Row="6" Text="Параметры системы" FontSize="20" Padding="30,30,5,5"/>
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="Погрешность" FontSize="16" Margin="40,10,0,10"/>
+                <TextBox    Grid.Row="7" Grid.Column="1" Text="{Binding ErrorFactor}" FontSize="16" Margin="00,10,0,10"/>
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="Коэф. доверия A" FontSize="16" Margin="40,10,0,10"/>
+                <TextBox    Grid.Row="8" Grid.Column="1" Text="{Binding TrustFactor}" FontSize="16" Margin="00,10,0,10"/>
+
+                <Button Content="Создать" FontSize="14" Grid.Row="11" Grid.ColumnSpan="2" Padding="15,5" Margin="0,45,0,15" Command="{Binding Create}"/>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

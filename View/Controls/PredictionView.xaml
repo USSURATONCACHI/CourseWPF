@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="CourseWPF.View.Controls.PredictionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CourseWPF.View.Controls"
+             xmlns:vm="clr-namespace:CourseWPF.ViewModel.Controls"
+             xmlns:oxycontrols="http://oxyplot.org/wpf/contrib"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Background="White">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <GridSplitter ResizeDirection="Columns" Grid.Column="0" Width="5"/>
+
+        <DataGrid Grid.Column="0" x:Name="Grid" ItemsSource="{Binding Data}"  AutoGenerateColumns="False"
+                              CanUserAddRows="False" CanUserDeleteRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Эпоха" Binding="{Binding Epoch}" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Path=Value}" IsReadOnly="True">
+                    <DataGridTextColumn.Header>
+                        <!-- <TextBlock Text="{Binding DataContext.PredictionName, RelativeSource={RelativeSource AncestorType=DataGrid}}"/> -->
+                        <TextBlock Text="Значение"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=Prediction}" IsReadOnly="True">
+                    <DataGridTextColumn.Header>
+                        <!-- <TextBlock Text="{Binding DataContext.PredictionTitle, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>  -->
+                        <TextBlock Text="Прогноз"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <oxycontrols:Plot Grid.Column="1" x:Name="Plot" PlotType="XY"
+                                      Title="{Binding PlotTitle}" MinHeight="400" MinWidth="300" Margin="30,0,0,0">
+            <oxycontrols:Plot.Axes>
+                <oxycontrols:LinearAxis Key="yAxis"
+                    Position="Left"
+                    MajorGridlineStyle="Dot"
+                    MajorGridlineColor="LightGray"
+                    Title="{Binding PlotTitle}"/>
+                <oxycontrols:LinearAxis Key="xAxis"
+                    Position="Bottom"
+                    MajorGridlineStyle="Dot"
+                    MajorGridlineColor="LightGray"
+                    Title="Эпоха t"/>
+            </oxycontrols:Plot.Axes>
+            <oxycontrols:Plot.Series>
+                <oxycontrols:LineSeries ItemsSource="{Binding OriginalPlotData}" MarkerSize="4" MarkerType="Circle"/>
+                <oxycontrols:LineSeries ItemsSource="{Binding PredsPlotData}" MarkerSize="4" MarkerType="Circle"/>
+            </oxycontrols:Plot.Series>
+        </oxycontrols:Plot>
+    </Grid>
+</UserControl>

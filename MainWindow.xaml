@@ -1,0 +1,67 @@
+﻿<Window x:Class="CourseWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CourseWPF"
+        xmlns:views="clr-namespace:CourseWPF.View"
+        xmlns:vms="clr-namespace:CourseWPF.ViewModel"
+        mc:Ignorable="d"
+        Title="Анализ движения" Height="450" Width="800">
+    <Grid>
+        <Grid.Resources>
+            <DataTemplate DataType="{x:Type vms:CoordsViewModel}">
+                <views:CoordsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vms:CreateProjectViewModel}">
+                <views:CreateProjectView/>
+            </DataTemplate>
+            
+            <DataTemplate DataType="{x:Type vms:TabsViewModel}">
+                <views:TabsView/>
+            </DataTemplate>
+            
+            <DataTemplate DataType="{x:Type vms:BlockViewModel}">
+                <views:BlockView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vms:OpenProjectViewModel}">
+                <views:OpenProjectView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vms:ParamsViewModel}">
+                <views:ParamsView/>
+            </DataTemplate>
+        </Grid.Resources>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Menu>
+            <Menu.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Style>
+            </Menu.Resources>
+            <MenuItem Header="Проект">
+                <MenuItem Header="Сохранить" Command="{Binding Save}"/>
+                <MenuItem Header="Закрыть" Command="{Binding CloseProject}"/>
+                <Separator/>
+                <MenuItem Header="Открыть..." Command="{Binding GoToOpenProject}"/>
+                <MenuItem Header="Новый..." Command="{Binding GoToNewProject}"/>
+                <Separator/>
+                <MenuItem Header="Выйти" Command="{Binding Quit}"/>
+            </MenuItem>
+            <MenuItem Header="О программе">
+                <MenuItem Header="О программе" Command="{Binding OpenAbout}"/>
+                <MenuItem Header="Справка" Command="{Binding OpenManual}"/>
+            </MenuItem>
+        </Menu>
+
+        <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}"/>
+    </Grid>
+</Window>

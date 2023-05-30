@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="CourseWPF.View.BlockView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CourseWPF.View"
+             xmlns:controls="clr-namespace:CourseWPF.View.Controls"
+             mc:Ignorable="d" 
+             d:DesignWidth="800" Background="White">
+    <Grid>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" MaxWidth="1000">
+            <TextBlock Text="{Binding Title}" FontSize="24" Padding="15"/>
+            <local:StateView DataContext="{Binding StateViewModel}" Margin="0,15"/>
+            <TextBlock Text="Прогнозы отдельных параметров" FontSize="20" Padding="45,10,15,10"/>
+            <controls:PredictionView DataContext="{Binding ModulePredictionVm}" Margin="0,15"/>
+            <controls:PredictionView DataContext="{Binding ModuleHighPredictionVm}" Margin="0,15"/>
+            <controls:PredictionView DataContext="{Binding ModuleLowPredictionVm}" Margin="0,15"/>
+            <controls:PredictionView DataContext="{Binding AnglePredictionVm}" Margin="0,15"/>
+            <controls:PredictionView DataContext="{Binding AngleHighPredictionVm}" Margin="0,15"/>
+            <controls:PredictionView DataContext="{Binding AngleLowPredictionVm}" Margin="0,15"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

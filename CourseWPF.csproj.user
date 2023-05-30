@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <ApplicationDefinition Update="App.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="AboutWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Manual.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\BlockView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Controls\PredictionView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\CoordsView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\CreateProjectView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\OpenProjectView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\ParamsView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Controls\StateView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\SchemeView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\TabsView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="AboutWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Manual.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\BlockView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Controls\PredictionView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\CoordsView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\CreateProjectView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\OpenProjectView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\ParamsView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Controls\StateView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\SchemeView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\TabsView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+</Project>
