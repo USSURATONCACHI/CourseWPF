@@ -9,7 +9,6 @@ namespace CourseWPF.Model {
     public class Vector {
         public static double Length(IEnumerable<double> vector) =>
             Math.Sqrt(vector.Sum(x => x * x));
-
         public static double Angle(IEnumerable<double> v1, IEnumerable<double> v2) {
             double dotProduct = v1.Zip(v2, (x, y) => x * y).Sum();
             var cos = dotProduct / (Length(v1) * Length(v2));
@@ -18,6 +17,7 @@ namespace CourseWPF.Model {
 
         public static IEnumerable<double> AddNum(IEnumerable<double> v1, double add) =>
             v1.Select((a) => a + add);
+
         public static double Average(IEnumerable<double> v) => v.Sum() / v.Count();
 
 
@@ -27,10 +27,6 @@ namespace CourseWPF.Model {
         public static IEnumerable<double> VecsToAngles(IEnumerable<IEnumerable<double>> vectors) {
             var first = vectors.First();
             var retval =  vectors.Select((vec, index) => Vector.Angle(vec, first));
-
-            if (retval.Where(x => double.IsNaN(x)).Count() > 0)
-                    Debug.Write("");
-
             return retval;
         }
     }

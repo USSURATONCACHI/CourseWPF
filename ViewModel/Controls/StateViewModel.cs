@@ -1,6 +1,8 @@
 ﻿using CourseWPF.Model;
 using CourseWPF.Stores;
-using OxyPlot;
+using LiveCharts;
+using LiveCharts.Defaults;
+using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,8 +24,8 @@ namespace CourseWPF.ViewModel.Controls {
             }
         }
 
-        private IList<DataPoint> _mainPlotData;
-        public IList<DataPoint> MainPlotData
+        private ObservableCollection<ObservablePoint> _mainPlotData;
+        public ObservableCollection<ObservablePoint> MainPlotData
         {
             get => _mainPlotData;
             set
@@ -33,8 +35,30 @@ namespace CourseWPF.ViewModel.Controls {
             }
         }
 
-        private IList<DataPoint> _lowPlotData;
-        public IList<DataPoint> LowPlotData
+        private SeriesCollection _livechartsSeries;
+        public SeriesCollection LivechartsSeries {
+            get => _livechartsSeries;
+            set {
+                _livechartsSeries = value;
+                OnPropertyChanged(nameof(LivechartsSeries));
+            }
+        }
+
+        private LineSeries ModuleSeries;
+        private LineSeries HighSeries;
+        private LineSeries LowSeries;
+
+        private ColorsCollection _livechartsColors;
+        public ColorsCollection LivechartsColors {
+            get => _livechartsColors;
+            set {
+                _livechartsColors = value;
+                OnPropertyChanged(nameof(LivechartsColors));
+            }
+        }
+
+        private ObservableCollection<ObservablePoint> _lowPlotData;
+        public ObservableCollection<ObservablePoint> LowPlotData
         {
             get => _lowPlotData;
             set
@@ -44,8 +68,8 @@ namespace CourseWPF.ViewModel.Controls {
             }
         }
 
-        private IList<DataPoint> _highPlotData;
-        public IList<DataPoint> HighPlotData
+        private ObservableCollection<ObservablePoint> _highPlotData;
+        public ObservableCollection<ObservablePoint> HighPlotData
         {
             get => _highPlotData;
             set
@@ -55,7 +79,7 @@ namespace CourseWPF.ViewModel.Controls {
             }
         }
 
-        private bool _showBorders;
+        private bool _showBorders = true;
         public bool ShowBorders
         {
             get => _showBorders;
@@ -64,28 +88,41 @@ namespace CourseWPF.ViewModel.Controls {
                 _showBorders = value;
                 OnPropertyChanged(nameof(ShowBorders));
                 OnPropertyChanged(nameof(BordersVisibility));
+
+                try {
+                    LowSeries.Visibility = BordersVisibility;
+                    HighSeries.Visibility = BordersVisibility;
+                } catch (Exception) { /*cum*/ }
             }
         }
+
         public Visibility BordersVisibility { get => _showBorders ? Visibility.Visible : Visibility.Hidden; }
 
         private BlockStateStore _blockStateStore;
 
 #pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
+        
         public StateViewModel(BlockStateStore bss) {
             _blockStateStore = bss;
             RefillTable();
 
+            LivechartsColors = new ColorsCollection();
+            LivechartsColors.AddRange(new[] { "#e22", "#e2e", "#22e", "#ee2", "#e2e", "#2ee" }
+                                  .Select(System.Windows.Media.ColorConverter.ConvertFromString)
+                                  .OfType<System.Windows.Media.Color>()
+                                  .ToList());
+
             bss.EpochAdded += id => {
                 AddEpoch(id);
-                UpdatePrediction();
+                RefillTable();
             };
             bss.EpochRemoved += id => {
                 RemoveEpoch(id);
-                UpdatePrediction();
+                RefillTable();
             };
             bss.EpochChanged += id => {
                 UpdateEpoch(id);
-                UpdatePrediction();
+                RefillTable();
             };
 
             bss.FullRefresh += () => 
@@ -93,7 +130,6 @@ namespace CourseWPF.ViewModel.Controls {
 
             bss.TrustFactorChanged += UpdatePrediction;
             bss.ErrorFactorChanged += () => RefillTable();
-
         }
 #pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
 
@@ -101,14 +137,28 @@ namespace CourseWPF.ViewModel.Controls {
             AddEpoch(_data, _mainPlotData, _highPlotData, _lowPlotData, id, dataIn);
         }
 
+        private BlockState.EpochData RoundTo(BlockState.EpochData data, int sign) {
+            return new BlockState.EpochData {
+                Angle = Math.Round(data.Angle, sign),
+                AngleHigh = Math.Round(data.AngleHigh, sign),
+                AngleLow = Math.Round(data.AngleLow, sign),
+                Module = Math.Round(data.Module, sign),
+                ModuleHigh = Math.Round(data.ModuleHigh, sign),
+                ModuleLow = Math.Round(data.ModuleLow, sign)
+            };
+        }
+
+        private IEnumerable<BlockState.EpochData> GetData() => 
+            _blockStateStore.BlockState.Data.Select(data => RoundTo(data, 5));
+
         public void AddEpoch(
             IList<TableRow> data, 
-            IList<DataPoint> mainPlotData, 
-            IList<DataPoint> highPlotData, 
-            IList<DataPoint> lowPlotData,
+            ObservableCollection<ObservablePoint> mainPlotData, 
+            ObservableCollection<ObservablePoint> highPlotData,
+            ObservableCollection<ObservablePoint> lowPlotData,
             int id, IEnumerable<BlockState.EpochData>? dataIn = null
          ) {
-            var modelData = dataIn is null ? _blockStateStore.BlockState.Data : dataIn;
+            var modelData = dataIn is null ? GetData() : dataIn;
 
             var currentData = modelData.ElementAt(id);
             var moduleFirst = modelData.First().Module;
@@ -134,7 +184,7 @@ namespace CourseWPF.ViewModel.Controls {
         }
 
         public void UpdateEpoch(int id) {
-            var modelData = _blockStateStore.BlockState.Data;
+            var modelData = GetData();
             var currentData = modelData.ElementAt(id);
             var moduleFirst = modelData.First().Module;
             var row = _data[id];
@@ -147,9 +197,11 @@ namespace CourseWPF.ViewModel.Controls {
             row.AngleLow = currentData.AngleLow;
             row.Diff = Math.Abs(currentData.Module - moduleFirst);
 
-            _mainPlotData[id] = new(currentData.Module, currentData.Angle);
-            _highPlotData[id] = new(currentData.ModuleHigh, currentData.AngleHigh);
-            _lowPlotData[id] = new(currentData.ModuleLow, currentData.AngleLow);
+            MainPlotData[id] = new(currentData.Module, currentData.Angle);
+            HighPlotData[id] = new(currentData.ModuleHigh, currentData.AngleHigh);
+            LowPlotData[id] = new(currentData.ModuleLow, currentData.AngleLow);
+
+            UpdateChart();
         }
 
         public void RemoveEpoch(int id) {
@@ -158,6 +210,7 @@ namespace CourseWPF.ViewModel.Controls {
             _highPlotData.RemoveAt(id);
             _lowPlotData.RemoveAt(id);
             UpdateIds(_data);
+            UpdateChart();
         }
 
         public void UpdateIds(IList<TableRow> data) {
@@ -169,11 +222,11 @@ namespace CourseWPF.ViewModel.Controls {
         public void RefillTable()
         {
             var newData = new ObservableCollection<TableRow>();
-            var newMainPlotData = new ObservableCollection<DataPoint>();
-            var newHighPlotData = new ObservableCollection<DataPoint>();
-            var newLowPlotData = new ObservableCollection<DataPoint>();
+            var newMainPlotData = new ObservableCollection<ObservablePoint>();
+            var newHighPlotData = new ObservableCollection<ObservablePoint>();
+            var newLowPlotData = new ObservableCollection<ObservablePoint>();
 
-            var modelData = _blockStateStore.BlockState.Data;
+            var modelData = GetData();
             for (int i = 0; i < modelData.Count(); i++)
                 AddEpoch(
                     newData, newMainPlotData, newHighPlotData, newLowPlotData,
@@ -184,6 +237,47 @@ namespace CourseWPF.ViewModel.Controls {
             MainPlotData = newMainPlotData;
             HighPlotData = newHighPlotData;
             LowPlotData = newLowPlotData;
+
+            UpdateChart();
+        }
+
+        private void UpdateChart() {
+            ModuleSeries = NewLineSeries(MainPlotData, "M(a)");
+            HighSeries = NewLineSeries(HighPlotData, "M+(a)");
+            LowSeries = NewLineSeries(LowPlotData, "M-(a)");
+
+            LivechartsSeries = new SeriesCollection() { 
+                ModuleSeries, HighSeries, LowSeries,
+            };
+
+            ShowBorders = true;
+        }
+
+        private static LineSeries NewLineSeries(IList<ObservablePoint> data, string title) {
+            return new LineSeries {
+                Title = title,
+                Values = new ChartValues<ObservablePoint>(data),
+                DataLabels = true,
+                Fill = System.Windows.Media.Brushes.Transparent,
+                LineSmoothness = 0.0,
+                LabelPoint = p => {
+                    var points = data.Select((p, i) => (p, i));
+
+                    string name = "";
+
+                    foreach ((var point, int index) in points) {
+                        if (point.X == p.X && point.Y == p.Y)
+                            if (index != (points.Count() - 1))
+                                name = $"{index}";
+                            else 
+                                name = "Прогноз";
+                    }
+
+
+                    return name;
+                },
+                FontSize = 12.0d,
+            };
         }
 
         public class TableRow : INotifyPropertyChanged

@@ -22,7 +22,7 @@ namespace CourseWPF {
 
         public string ManualText { get; set; }
         public Manual() {
-            ManualText = File.ReadAllText("D:\\MyFiles\\dungeon 4\\Дока\\docs.md");
+            ManualText = File.ReadAllText("docs.md");
             InitializeComponent();
         }
     }

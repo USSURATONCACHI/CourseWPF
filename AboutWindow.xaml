@@ -20,7 +20,7 @@
 
                         <Paragraph>Программа: Анализ движения, курсовая, 2 курс</Paragraph>
                         <Paragraph>Программа предназначена для разноуровневого анализа движения технологического объекта. Анализ производится по данным "датчиков высот".</Paragraph>
-                        <Paragraph>Использованные библиотеки: OxyPlot, SQLite, MdXaml.</Paragraph>
+                        <Paragraph>Использованные библиотеки: OxyPlot, SQLite, MdXaml, Livecharts.</Paragraph>
                     </FlowDocument>
                 </RichTextBox>
             </StackPanel>

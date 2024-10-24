@@ -1,5 +1,4 @@
 ﻿using CourseWPF.Model;
-using OxyPlot.Axes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

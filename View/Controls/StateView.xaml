@@ -5,27 +5,30 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CourseWPF.View"
              xmlns:oxycontrols="http://oxyplot.org/wpf/contrib"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d" 
-             Height="450" d:DesignWidth="800">
+             Height="450" d:DesignWidth="800" Background="White">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical" Margin="5,5,5,15">
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" Margin="5,5,5,15" Grid.ColumnSpan="2">
             <CheckBox Content="Показать M" x:Name="ShowModulesCheckbox" Checked="CheckedShowModules" Unchecked="CheckedShowModules"/>
             <CheckBox Content="Показать A" x:Name="ShowAnglesCheckbox" Checked="CheckedShowAngles" Unchecked="CheckedShowAngles"/>
             <CheckBox Content="Показать рассчеты" x:Name="ShowCalcsCheckbox" Checked="CheckedShowCalcs" Unchecked="CheckedShowCalcs"/>
             <CheckBox Content="Показать границы" IsChecked="{Binding ShowBorders}"/>
         </StackPanel>
 
-        <DataGrid Grid.Row="1" Grid.Column="0" x:Name="MainGrid" ItemsSource="{Binding Data}"  AutoGenerateColumns="False"
-                              CanUserAddRows="False" CanUserDeleteRows="False">
+        <DataGrid Grid.Row="2"  Grid.Column="0" x:Name="MainGrid" ItemsSource="{Binding Data}"  AutoGenerateColumns="False"
+                              CanUserAddRows="False" CanUserDeleteRows="False" Margin="0">
             <DataGrid.Columns>
                 <DataGridTextColumn IsReadOnly="True" Header="Эпоха" Binding="{Binding Epoch}"/>
                 <DataGridTextColumn IsReadOnly="True" Header="M-" Binding="{Binding Path=ModuleLow,StringFormat={}{0:N4}}"/>
@@ -40,7 +43,17 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <oxycontrols:Plot Grid.RowSpan="2" Grid.Column="1" x:Name="MainPlot" 
+        <lvc:CartesianChart LegendLocation="Bottom" Grid.Row ="1" Grid.RowSpan="2" Grid.Column="1" MaxHeight="600" Background="White"
+                            Series="{Binding LivechartsSeries}" SeriesColors="{Binding LivechartsColors}" Grid.ColumnSpan="2">
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis Title="Module"/>
+            </lvc:CartesianChart.AxisX>
+            <lvc:CartesianChart.AxisY>
+                <lvc:Axis Title="Angle"/>
+            </lvc:CartesianChart.AxisY>
+        </lvc:CartesianChart>
+
+        <!-- <oxycontrols:Plot Grid.RowSpan="2" Grid.Column="1" x:Name="MainPlot" 
                                       Title="M(angle)" MinHeight="400" MinWidth="300" Margin="30,0,0,0">
             <oxycontrols:Plot.Axes>
                 <oxycontrols:LinearAxis Key="yAxis"
@@ -59,6 +72,7 @@
                 <oxycontrols:LineSeries ItemsSource="{Binding MainPlotData}" MarkerSize="4" MarkerType="Circle"/>
                 <oxycontrols:LineSeries Visibility="{Binding BordersVisibility}" ItemsSource="{Binding HighPlotData}" MarkerSize="4" MarkerType="Circle"/>
             </oxycontrols:Plot.Series>
-        </oxycontrols:Plot>
+        </oxycontrols:Plot> -->
+
     </Grid>
 </UserControl>

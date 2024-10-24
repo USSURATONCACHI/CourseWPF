@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:CourseWPF.View.Controls"
              xmlns:vm="clr-namespace:CourseWPF.ViewModel.Controls"
              xmlns:oxycontrols="http://oxyplot.org/wpf/contrib"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Background="White">
     <Grid>
@@ -35,7 +36,17 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <oxycontrols:Plot Grid.Column="1" x:Name="Plot" PlotType="XY"
+        <lvc:CartesianChart LegendLocation="Bottom" Grid.Row ="0" Grid.Column="1" MaxHeight="600" Background="White" 
+                            Series="{Binding LivechartsSeries}" SeriesColors="{Binding LivechartsColors}" Grid.ColumnSpan="2" Margin="221,0,0,0">
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis Title="Module"/>
+            </lvc:CartesianChart.AxisX>
+            <lvc:CartesianChart.AxisY>
+                <lvc:Axis Title="Эпоха"/>
+            </lvc:CartesianChart.AxisY>
+        </lvc:CartesianChart>
+        
+        <!-- <oxycontrols:Plot Grid.Column="1" x:Name="Plot" PlotType="XY"
                                       Title="{Binding PlotTitle}" MinHeight="400" MinWidth="300" Margin="30,0,0,0">
             <oxycontrols:Plot.Axes>
                 <oxycontrols:LinearAxis Key="yAxis"
@@ -53,6 +64,6 @@
                 <oxycontrols:LineSeries ItemsSource="{Binding OriginalPlotData}" MarkerSize="4" MarkerType="Circle"/>
                 <oxycontrols:LineSeries ItemsSource="{Binding PredsPlotData}" MarkerSize="4" MarkerType="Circle"/>
             </oxycontrols:Plot.Series>
-        </oxycontrols:Plot>
+        </oxycontrols:Plot> -->
     </Grid>
 </UserControl>

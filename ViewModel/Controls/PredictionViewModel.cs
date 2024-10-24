@@ -1,5 +1,7 @@
 ﻿using CourseWPF.Stores;
-using OxyPlot;
+using LiveCharts;
+using LiveCharts.Defaults;
+using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,8 +26,8 @@ namespace CourseWPF.ViewModel.Controls {
         }
 
 
-        private IList<DataPoint> _predsPlotData;
-        public IList<DataPoint> PredsPlotData {
+        private IList<double> _predsPlotData;
+        public IList<double> PredsPlotData {
             get => _predsPlotData;
             set {
                 _predsPlotData = value;
@@ -33,8 +35,8 @@ namespace CourseWPF.ViewModel.Controls {
             }
         }
 
-        private IList<DataPoint> _originalPlotData;
-        public IList<DataPoint> OriginalPlotData {
+        private IList<double> _originalPlotData;
+        public IList<double> OriginalPlotData {
             get => _originalPlotData;
             set {
                 _originalPlotData = value;
@@ -54,12 +56,43 @@ namespace CourseWPF.ViewModel.Controls {
         }
         public string PredictionTitle => $"A = {_predictionStore.Prediction.TrustFactor}";
 
+        private LineSeries OriginalSeries;
+        private LineSeries PredictionSerires;
+
+        private SeriesCollection _livechartsSeries;
+        public SeriesCollection LivechartsSeries {
+            get => _livechartsSeries;
+            set {
+                _livechartsSeries = value;
+                OnPropertyChanged(nameof(LivechartsSeries));
+            }
+        }
+
+        private ColorsCollection _livechartsColors;
+        public ColorsCollection LivechartsColors {
+            get => _livechartsColors;
+            set {
+                _livechartsColors = value;
+                OnPropertyChanged(nameof(LivechartsColors));
+            }
+        }
+
+
         public PredictionViewModel(PredictionStore ps, string paramName) {
             _predictionStore = ps;
             _data = new();
-            _predsPlotData = new ObservableCollection<DataPoint>();
-            _originalPlotData = new ObservableCollection<DataPoint>();
+            _predsPlotData = new ObservableCollection<double>();
+            _originalPlotData = new ObservableCollection<double>();
+            PredictionSerires = new();
+            OriginalSeries = new();
             PredictionName = paramName;
+
+            _livechartsColors = new();
+            _livechartsSeries = new();
+            LivechartsColors.AddRange(new[] { "#22e", "#28e", "#e22", "#ee2", "#e2e", "#2ee" }
+                                  .Select(System.Windows.Media.ColorConverter.ConvertFromString)
+                                  .OfType<System.Windows.Media.Color>()
+                                  .ToList());
 
             _predictionStore.FullRefresh += () => FillTable();
             _predictionStore.TrustFactorChanged += () => FillTable();
@@ -78,8 +111,8 @@ namespace CourseWPF.ViewModel.Controls {
         public void FillTable(int startFrom = 0) {
             startFrom = 0;
             ObservableCollection<TableRow> newData = new(Data.Take(startFrom));
-            IList<DataPoint> newGraph = new ObservableCollection<DataPoint>(OriginalPlotData.Take(startFrom)), 
-                newPreds = new ObservableCollection<DataPoint>(PredsPlotData.Take(startFrom));
+            IList<double> newGraph = new ObservableCollection<double>(OriginalPlotData.Take(startFrom)), 
+                newPreds = new ObservableCollection<double>(PredsPlotData.Take(startFrom));
 
             var modelData = _predictionStore.Prediction.Data;
             var modelPredictions = _predictionStore.Prediction.Predictions;
@@ -96,8 +129,8 @@ namespace CourseWPF.ViewModel.Controls {
                 });
 
                 if (newData.Last().Value is double value)
-                    newGraph.Add(new((double) i, value));
-                newPreds.Add(new((double) i, newData.Last().Prediction));
+                    newGraph.Add(value);
+                newPreds.Add(newData.Last().Prediction);
             }
 
             for (; i < predsLength; i++) {
@@ -106,12 +139,50 @@ namespace CourseWPF.ViewModel.Controls {
                     Value = null,
                     Prediction = Math.Round(modelPredictions.ElementAt(i), 4),
                 });
-                newPreds.Add(new((double) i, newData.Last().Prediction));
+                newPreds.Add(newData.Last().Prediction);
             }
 
             Data = newData;
             PredsPlotData = newPreds;
             OriginalPlotData = newGraph;
+
+            UpdateChart();
+        }
+
+        private void UpdateChart() {
+            OriginalSeries = NewLineSeries(OriginalPlotData, "Значения");
+            PredictionSerires = NewLineSeries(PredsPlotData, "Прогноз");
+
+            LivechartsSeries = new SeriesCollection() {
+                OriginalSeries, PredictionSerires
+            };
+        }
+
+        private static LineSeries NewLineSeries(IEnumerable<double> data, string title) {
+            return new LineSeries {
+                Title = title,
+                Values = new ChartValues<double>(data),
+                DataLabels = true,
+                Fill = System.Windows.Media.Brushes.Transparent,
+                LineSmoothness = 0.0,
+                LabelPoint = p => {
+                    var points = data.Select((p, i) => (p, i));
+
+                    string name = "";
+
+                    foreach ((var point, int index) in points) {
+                        if (point == p.X && (double)index == p.Y)
+                            if (index != (points.Count() - 1))
+                                name = $"{index}";
+                            else
+                                name = "Прогноз";
+                    }
+
+
+                    return name;
+                },
+                FontSize = 12.0d,
+            };
         }
 
         public class TableRow : INotifyPropertyChanged {

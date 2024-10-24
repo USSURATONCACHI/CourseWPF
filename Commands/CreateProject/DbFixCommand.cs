@@ -32,7 +32,7 @@ namespace CourseWPF.Commands.CreateProject {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.CreateNoWindow = false;
             startInfo.UseShellExecute = false;
-            startInfo.FileName = "db_fix.exe";
+            startInfo.FileName = "db_fix/db_fix.exe";
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             string tableName = _viewModel.AvailableDbTables[_viewModel.SelectedTableIndex];
             startInfo.ArgumentList.Add(_viewModel.DatabasePath);

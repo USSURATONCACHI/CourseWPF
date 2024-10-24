@@ -1,15 +1,9 @@
 ﻿using CourseWPF.Model;
 using CourseWPF.Stores;
-using CourseWPF.View;
 using CourseWPF.ViewModel.Controls;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 
 namespace CourseWPF.ViewModel {
     public class TabsViewModel : ViewModelBase {
@@ -35,6 +29,7 @@ namespace CourseWPF.ViewModel {
                 OnPropertyChanged(nameof(SelectedLevel2Block));
             }
         }
+
 
         private int _selectedLevel4Point;
         public int SelectedLevel4Point {
